@@ -2,14 +2,29 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import helmet from "helmet";
-import Book from "./models/bookModel.js";
+import cors from "cors";
+
+import bookRoute from "./routes/booksRoute.js";
 
 dotenv.config();
 
 const app = express();
 
 app.use(helmet());
+
+// Middleware for parsing request body
 app.use(express.json());
+// Middleware for handling CORS policy
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
+    allowHeaders: ["Content-Type,Authorization"],
+  })
+);
+
+// Todo: add midleware for handling error
+// Todo: comment and separate all logic
 
 const port = process.env.PORT || 3000;
 const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/bookstoredb";
@@ -19,35 +34,7 @@ app.get("/", (req, res) => {
   return res.status(234).send("Welcome to book store api");
 });
 
-app.post("/books", async (req, res) => {
-  try {
-    if (!req.body.title || !req.body.author || !req.body.publishYear) {
-      return res.status(400).send({
-        message: "Send all required fields: title, author, publishYear",
-      });
-    }
-
-    const newBook = {
-      title: req.body.title,
-      author: req.body.author,
-      publishYear: req.body.publishYear,
-    };
-    const book = await Book.create(newBook);
-
-    return res.status(201).send(book);
-  } catch (error) {
-    console.error(error);
-
-    if (error.name === "ValidationError") {
-      return res.status(400).send({ message: error.message });
-    }
-
-    return res.status(500).send({
-      message: "An error occurred while creating the book.",
-      error: error.message,
-    });
-  }
-});
+app.use("/books", bookRoute);
 
 (async () => {
   try {
