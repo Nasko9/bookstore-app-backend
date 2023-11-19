@@ -28,7 +28,7 @@ This project is built using the following technologies:
 To get started with the Book Store App API, clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/yourusername/bookstore-api.git
+git clone https://github.com/Nasko9/bookstore-app-backend.git
 cd bookstore-api
 npm install
 ```
