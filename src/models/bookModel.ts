@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const bookSchema = mongoose.Schema(
+const bookSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -20,8 +20,25 @@ const bookSchema = mongoose.Schema(
     publishYear: {
       type: Number,
       required: [true, "A book must have a publish year"],
-      //   min: [1900, "Publish year must be after 1900"],
       max: [new Date().getFullYear(), "Publish year cannot be in the future"],
+    },
+    genres: [
+      {
+        type: String,
+        enum: [
+          "Fantasy",
+          "Science Fiction",
+          "Mystery",
+          "Thriller",
+          "Non-fiction",
+          "Romance",
+        ],
+        message: "{VALUE} is not a valid genre",
+      },
+    ],
+    available: {
+      type: Boolean,
+      default: true,
     },
   },
   {
@@ -32,34 +49,3 @@ const bookSchema = mongoose.Schema(
 const Book = mongoose.model("Book", bookSchema);
 
 export default Book;
-
-// Todo: Add this properties later
-// genres: [
-//   {
-//     type: String,
-//     enum: [
-//       "Fantasy",
-//       "Science Fiction",
-//       "Mystery",
-//       "Thriller",
-//       "Non-fiction",
-//       "Romance",
-//     ],
-//     message: "{VALUE} is not a valid genre",
-//   },
-// ],
-// available: {
-//   type: Boolean,
-//   default: true,
-// },
-// publisher: {
-//   name: {
-//     type: String,
-//     required: [true, "A book must have a publisher name"],
-//   },
-//   location: {
-//     type: String,
-//     required: [true, "A book must have a publisher location"],
-//   },
-// },
-// additionalInfo: mongoose.Schema.Types.Mixed,
