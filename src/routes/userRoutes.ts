@@ -1,18 +1,54 @@
+// Modules
 import express, { Request, Response } from "express";
+// Model
 import User from "../models/userModel";
+// Middleware
+import { userValidationRules, validate } from "../middleware/validation";
 
 const router = express.Router();
 
-router.post("/register", async (req: Request, res: Response) => {
-  try {
-    const { username, email, password } = req.body;
-    const user = new User({ username, email });
-    await User.register(user, password);
+router.post(
+  "/register",
+  userValidationRules(),
+  validate,
+  async (req: Request, res: Response) => {
+    try {
+      const {
+        name,
+        lastname,
+        email,
+        mobilePhone,
+        country,
+        city,
+        street,
+        streetNumber,
+        postalCode,
+        sex,
+        agreedToTerms,
+        password,
+      } = req.body;
 
-    res.json({ success: true, message: "Registration successful" });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Registration failed" });
+      const user = new User({
+        name,
+        lastname,
+        email,
+        mobilePhone,
+        country,
+        city,
+        street,
+        streetNumber,
+        postalCode,
+        sex,
+        agreedToTerms,
+      });
+
+      await User.register(user, password);
+      res.status(201).json({ message: "User registered successfully" });
+    } catch (error) {
+      console.log(error, "error");
+      res.status(500).json({ success: false, message: "Registration failed" });
+    }
   }
-});
+);
 
 export default router;
